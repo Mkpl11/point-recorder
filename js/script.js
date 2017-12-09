@@ -7,6 +7,7 @@
 
 var map;
 var markers = [];
+var infoWindow = null;
 
 //add notification theme green
 $.notiny.addTheme('green', {
@@ -46,25 +47,28 @@ function init_map() {
 //get all saved marker
 function retrieveMarkers() {
     $.ajax({
-        url: "./function.php",
+        url: './function.php',
         data: {
             'action': 'retrieve',
         },
-        type: "POST"
-    }).done(function (result) {
-        var result = JSON.parse(result);
-        console.log(result);
-        for (var i = 0; i < result.length; i++) {
-            var item = result[i].latlng.split(';');
-            var position = {
-                lat: Number(item[0]),
-                lng: Number(item[1])
-            };
-            addMarker(position, false);
-        }
-        showNotiSuccess('Success Retrieving Markers');
-    }).fail(function (xhr, status, errorThrown) {
-        showNotiError('Error Retrieving Markers');
+        type: 'POST',
+        error: function () {
+            showNotiError('Error Retrieving Markers');
+        },
+        success: function (data) {
+            var result = JSON.parse(data);
+            console.log(result);
+            for (var i = 0; i < result.length; i++) {
+                var item = result[i].latlng.split(';');
+                var position = {
+                    lat: Number(item[0]),
+                    lng: Number(item[1])
+                };
+                addMarker(position, false);
+
+            }
+            showNotiSuccess('Success Retrieving Markers');
+        },
     });
 }
 
@@ -76,12 +80,17 @@ function addMarker(location, save) {
         map: map,
     });
 
-    var infowindow = new google.maps.InfoWindow({
+    var infowindowC = new google.maps.InfoWindow({
         content: popup_content('' + location.lat + ';' + location.lng, position)
     });
 
     marker.addListener('click', function () {
-        infowindow.open(map, marker);
+        if (infoWindow !=  null){
+            infoWindow.close();
+            console.log('oke');
+        }
+        infoWindow = infowindowC;
+        infowindowC.open(map, marker);
     });
     markers.push(marker);
     if (save == true) {

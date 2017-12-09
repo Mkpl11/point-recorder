@@ -10,7 +10,7 @@ include_once 'conx.php'; //database connection
 
 //get database connection
 function get_db_handler(){
-    $conx = new Conx();
+    $conx = new Conx('localhost', 'root', 'qwe', 'gis_batu');
     $dbh = $conx->getHandler();
     return $dbh;
 }
