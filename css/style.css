@@ -1,0 +1,26 @@
+/**
+ * User: fikriarroisi
+ * Date: 20/12/16
+ * Time: 18:18
+ * This file content all custom CSS
+ */
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#map-canvas {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.notiny-theme-green {
+    background-color: #00c853;
+    color: #f5f5f5;
+}
+.notiny-theme-red {
+    background-color: #c62828;
+    color: #f5f5f5;
+}
