@@ -41,7 +41,7 @@ function init_map() {
             lat: event.latLng.lat(),
             lng: event.latLng.lng()
         };
-        addMarker(position, true);
+        openAddForm(position);
     });
     retrieveMarkers();
 }
@@ -66,97 +66,132 @@ function retrieveMarkers() {
                     lat: Number(item[0]),
                     lng: Number(item[1])
                 };
-                addMarker(position, false);
-
+                data = {
+                    'position': position,
+                    'nama': result[i].nama,
+                    'deskripsi': result[i].deskripsi
+                };
+                addMarker(data, false);
             }
             showNotiSuccess('Success Retrieving Markers');
         },
     });
 }
 
-//add marker to maps
-function addMarker(location, save) {
-    var position = markers.length;
+function openAddForm(location) {
     var marker = new google.maps.Marker({
         position: location,
         map: map,
     });
 
+    var content = '' +
+        '<span>Location: '+location.lat+'; '+location.lng+'</span>' +
+        '<form action="./function.php" method="POST">' +
+        '<input type="hidden" name="action" value="save">' +
+        '<input type="hidden" name="latlng" value="'+location.lat+';'+location.lng+'">' +
+        '<div class="form-group">' +
+        '<input type="text" class="form-control" name="nama" placeholder="Nama">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<input type="text" class="form-control" name="deskripsi" placeholder="Deskripsi">' +
+        '</div>' +
+        '<button type="submit" class="btn btn-amber">Add</button>' +
+        '</form>';
+
     var infowindowC = new google.maps.InfoWindow({
-        content: popup_content('' + location.lat + ';' + location.lng, position)
+        content: content
+    });
+    infoWindow = infowindowC;
+    infowindowC.open(map, marker);
+    google.maps.event.addListener(infowindowC,'closeclick',function(){
+        marker.setMap(null);
+    });
+}
+
+//add marker to maps
+function addMarker(data, save) {
+    var position = markers.length;
+    var marker = new google.maps.Marker({
+        position: data.position,
+        map: map,
+    });
+
+    var infowindowC = new google.maps.InfoWindow({
+        content: popup_content(data, position)
     });
 
     marker.addListener('click', function () {
-        if (infoWindow !=  null){
+        if (infoWindow != null) {
             infoWindow.close();
-            console.log('oke');
         }
         infoWindow = infowindowC;
         infowindowC.open(map, marker);
-        if(recordDistancePoint.length > 1){
-        recordDistancePoint.shift();
-    }
-    recordDistancePoint.push({
-        'lat': location.lat,
-        'lng':location.lng
-    });
+        if (recordDistancePoint.length > 1) {
+            recordDistancePoint.shift();
+        }
+        recordDistancePoint.push({
+            'lat': data.position.lat,
+            'lng': data.position.lng
+        });
     });
     markers.push(marker);
     if (save == true) {
-        saveMarker(location.lat + ';' + location.lng);
+        saveMarker(data.position.lat + ';' + data.position.lng);
     }
 }
 
 //pop up marker content
-function popup_content(latlng, position) {
+function popup_content(data, position) {
+    console.log(data);
+    var latlng = data.position.lat+';'+data.position.lng;
     return '<div id="content">' +
         '<div id="siteNotice">' +
         '</div>' +
-        '<h5 id="firstHeading" class="firstHeading">' + latlng + '</h5>' +
+        '<h5 id="firstHeading" class="firstHeading">' + data.nama + '</h5>' +
         '<div id="bodyContent">' +
-        '<p>This marker has position ' + latlng + '<br>' +
-        'Delete this marker ? </p>' +
+        '<p>'+data.deskripsi+'</p>' +
+        '<p>Location: '+data.position.lat+';'+data.position.lng+'</p>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger">Delete</button>' +
         '</div>' +
         '</div>';
 }
 
 //function to count distance between marker
-var rad = function(x) {
-  return x * Math.PI / 180;
+var rad = function (x) {
+    return x * Math.PI / 180;
 };
 
-var getDistance = function() {
+var getDistance = function () {
     p1 = recordDistancePoint[0];
     p2 = recordDistancePoint[1]
-  var R = 6378137; // Earth’s mean radius in meter
-  var dLat = rad(p2.lat - p1.lat);
-  var dLong = rad(p2.lng - p1.lng);
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
-    Math.sin(dLong / 2) * Math.sin(dLong / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = R * c;
-  console.log(d);
-  console.log(recordDistancePoint);
-  $('#p-distance').html(d.toFixed(2)+' Meter');
+    var R = 6378137; // Earth’s mean radius in meter
+    var dLat = rad(p2.lat - p1.lat);
+    var dLong = rad(p2.lng - p1.lng);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    console.log(d);
+    console.log(recordDistancePoint);
+    $('#p-distance').html(d.toFixed(2) + ' Meter');
 
-  //draw line
-  if(polyLine){
-    polyLine.setMap(null);
-  }
+    //draw line
+    if (polyLine) {
+        polyLine.setMap(null);
+    }
     var line = new google.maps.Polyline({
-    path: [
-        new google.maps.LatLng(p1.lat, p1.lng), 
-        new google.maps.LatLng(p2.lat, p2.lng)
-    ],
-    strokeColor: "#FF0000",
-    strokeOpacity: 1.0,
-    strokeWeight: 10,
-    map: map
-});
+        path: [
+            new google.maps.LatLng(p1.lat, p1.lng),
+            new google.maps.LatLng(p2.lat, p2.lng)
+        ],
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 10,
+        map: map
+    });
     polyLine = line;
-  return d; // returns the distance in meter
+    return d; // returns the distance in meter
 };
 
 

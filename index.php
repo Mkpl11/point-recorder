@@ -14,7 +14,7 @@
 <body>
 
 <!--Navbar-->
-<nav class="navbar navbar-dark unique-color navbar-fixed-top">
+<nav class="navbar navbar-dark navbar-fixed-top">
     <div class="container">
         <!--Collapse content-->
         <div class="collapse navbar-toggleable-xs" id="collapseEx2">
@@ -23,10 +23,12 @@
         </div>
     </div>
 </nav>
-<div style="position: fixed; z-index: 999999; bottom: 0; background: #fff">
-    <button class ="btn btn-primary" onclick="getDistance()">Calculate Distance</button>
-    <p id="p-distance" class="text-center" style="text-align: center;">CLick 2 Marker and click calculate distance<p>
-    </div>
+<div style="position: fixed; z-index: 999999; bottom: 0;">
+    <button class="btn btn-primary" onclick="getDistance()">Calculate Distance</button>
+    <br>
+    <b><span id="p-distance" style="color: #fff; padding: 10px">CLick 2 Marker and click calculate distance</span></b>
+    <br><br>
+</div>
 <!--/.Navbar-->
 <div id="map-canvas" style="height: 100%;"></div>
 

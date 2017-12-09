@@ -65,15 +65,17 @@ function delete_marker(){
 
 //save marker to database
 function save_marker(){
-    if(isset($_POST['latlng'])){
+    if(isset($_POST['latlng']) && $_POST['nama']){
         $latlng = $_POST['latlng'];
+        $nama = $_POST['nama'];
+        $deskripsi = $_POST['deskripsi'];
         $dbh = get_db_handler();
-        $query = "INSERT INTO latlng_record (latlng) VALUES ('$latlng')";
+        $query = "INSERT INTO latlng_record (latlng, nama, deskripsi) VALUES ('$latlng', '$nama', '$deskripsi')";
         $st = $dbh->prepare($query);
         if(!$st->execute()){
             echo false;
         }
-        echo true;
+        header('Location: ./');
     }
     echo false;
 }
