@@ -23,6 +23,10 @@
         </div>
     </div>
 </nav>
+<div style="position: fixed; z-index: 999999; bottom: 0; background: #fff">
+    <button class ="btn btn-primary" onclick="getDistance()">Calculate Distance</button>
+    <p id="p-distance" class="text-center" style="text-align: center;">CLick 2 Marker and click calculate distance<p>
+    </div>
 <!--/.Navbar-->
 <div id="map-canvas" style="height: 100%;"></div>
 

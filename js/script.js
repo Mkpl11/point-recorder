@@ -8,6 +8,8 @@
 var map;
 var markers = [];
 var infoWindow = null;
+var polyLine = null;
+var recordDistancePoint = [];
 
 //add notification theme green
 $.notiny.addTheme('green', {
@@ -91,6 +93,13 @@ function addMarker(location, save) {
         }
         infoWindow = infowindowC;
         infowindowC.open(map, marker);
+        if(recordDistancePoint.length > 1){
+        recordDistancePoint.shift();
+    }
+    recordDistancePoint.push({
+        'lat': location.lat,
+        'lng':location.lng
+    });
     });
     markers.push(marker);
     if (save == true) {
@@ -111,6 +120,45 @@ function popup_content(latlng, position) {
         '</div>' +
         '</div>';
 }
+
+//function to count distance between marker
+var rad = function(x) {
+  return x * Math.PI / 180;
+};
+
+var getDistance = function() {
+    p1 = recordDistancePoint[0];
+    p2 = recordDistancePoint[1]
+  var R = 6378137; // Earth’s mean radius in meter
+  var dLat = rad(p2.lat - p1.lat);
+  var dLong = rad(p2.lng - p1.lng);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+    Math.sin(dLong / 2) * Math.sin(dLong / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  console.log(d);
+  console.log(recordDistancePoint);
+  $('#p-distance').html(d.toFixed(2)+' Meter');
+
+  //draw line
+  if(polyLine){
+    polyLine.setMap(null);
+  }
+    var line = new google.maps.Polyline({
+    path: [
+        new google.maps.LatLng(p1.lat, p1.lng), 
+        new google.maps.LatLng(p2.lat, p2.lng)
+    ],
+    strokeColor: "#FF0000",
+    strokeOpacity: 1.0,
+    strokeWeight: 10,
+    map: map
+});
+    polyLine = line;
+  return d; // returns the distance in meter
+};
+
 
 //delete marker on maps and database
 function deleteMarker(latlng, position) {
