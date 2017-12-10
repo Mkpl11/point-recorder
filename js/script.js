@@ -147,10 +147,10 @@ function popup_content(data, position) {
     return '<div id="content">' +
         '<div id="siteNotice">' +
         '</div>' +
-        '<h5 id="firstHeading" class="firstHeading">' + data.nama + '</h5>' +
+        '<h5 id="firstHeading" class="firstHeading"><b>' + data.nama + '</b></h5>' +
         '<div id="bodyContent">' +
         '<p>'+data.deskripsi+'</p>' +
-        '<p>Location: '+data.position.lat+';'+data.position.lng+'</p>' +
+        '<span class="small">Location: '+data.position.lat+';'+data.position.lng+'</span><br><br>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger btn-sm">Delete</button>' +
         '</div>' +
         '</div>';
