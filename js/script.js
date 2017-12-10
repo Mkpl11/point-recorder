@@ -9,7 +9,9 @@ var map;
 var markers = [];
 var infoWindow = null;
 var polyLine = null;
+var polyLines = [];
 var recordDistancePoint = [];
+var globalData = [];
 
 //add notification theme green
 $.notiny.addTheme('green', {
@@ -71,6 +73,7 @@ function retrieveMarkers() {
                     'nama': result[i].nama,
                     'deskripsi': result[i].deskripsi
                 };
+                globalData.push(data);
                 addMarker(data, false);
             }
             showNotiSuccess('Success Retrieving Markers');
@@ -85,10 +88,10 @@ function openAddForm(location) {
     });
 
     var content = '' +
-        '<span>Location: '+location.lat+'; '+location.lng+'</span>' +
+        '<span>Location: ' + location.lat + '; ' + location.lng + '</span>' +
         '<form action="./function.php" method="POST">' +
         '<input type="hidden" name="action" value="save">' +
-        '<input type="hidden" name="latlng" value="'+location.lat+';'+location.lng+'">' +
+        '<input type="hidden" name="latlng" value="' + location.lat + ';' + location.lng + '">' +
         '<div class="form-group">' +
         '<input type="text" class="form-control" name="nama" placeholder="Nama">' +
         '</div>' +
@@ -103,7 +106,7 @@ function openAddForm(location) {
     });
     infoWindow = infowindowC;
     infowindowC.open(map, marker);
-    google.maps.event.addListener(infowindowC,'closeclick',function(){
+    google.maps.event.addListener(infowindowC, 'closeclick', function () {
         marker.setMap(null);
     });
 }
@@ -143,16 +146,16 @@ function addMarker(data, save) {
 //pop up marker content
 function popup_content(data, position) {
     console.log(data);
-    var latlng = data.position.lat+';'+data.position.lng;
+    var latlng = data.position.lat + ';' + data.position.lng;
     return '<div id="content">' +
         '<div id="siteNotice">' +
         '</div>' +
         '<h5 id="firstHeading" class="firstHeading">' + data.nama + '</h5>' +
         '<div id="bodyContent">' +
-        '<p>'+data.deskripsi+'</p>' +
-        '<p>Location: '+data.position.lat+';'+data.position.lng+'</p>' +
-        '<input id="input-raidus" type="number" class="form-control" placeholder="Radius (in Meter)">' +
-        '<button class="btn btn-indigo" onclick="searchRadius()">Search</button>' +
+        '<p>' + data.deskripsi + '</p>' +
+        '<p>Location: ' + data.position.lat + ';' + data.position.lng + '</p>' +
+        '<input id="input-radius" type="number" class="form-control" placeholder="Radius (in Meter)">' +
+        '<button class="btn btn-indigo" onclick="searchRadius(' + data.position.lat + ',' + data.position.lng + ')">Search</button>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger">Delete</button>' +
         '<ul id="ul-radius">' +
         '</ul>' +
@@ -197,6 +200,49 @@ var getDistance = function () {
     polyLine = line;
     return d; // returns the distance in meter
 };
+
+function searchRadius(lat, lng) {
+    var location = {
+        'lat': lat,
+        'lng': lng
+    };
+    var rad = $('#input-radius').val();
+    checkRange(location, rad);
+}
+
+function checkRange(location, radius) {
+    var p1 = location;
+    polyLines.forEach(function (item) {
+        item.setMap(null);
+    });
+    polyLines = [];
+    globalData.forEach(function (item) {
+        var p2 = item.position;
+        var R = 6378137; // Earth’s mean radius in meter
+        var dLat = rad(p2.lat - p1.lat);
+        var dLong = rad(p2.lng - p1.lng);
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+            Math.sin(dLong / 2) * Math.sin(dLong / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        if (d <= radius) {
+            console.log('FOUND');
+            //draw line
+            var line = new google.maps.Polyline({
+                path: [
+                    new google.maps.LatLng(p1.lat, p1.lng),
+                    new google.maps.LatLng(p2.lat, p2.lng)
+                ],
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 5,
+                map: map
+            });
+            polyLines.push(line);
+        }
+    });
+}
 
 
 //delete marker on maps and database
