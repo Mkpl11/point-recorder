@@ -161,7 +161,7 @@ function popup_content(data, position) {
         '<p>' + data.deskripsi + '</p>' +
         '<span class="small">Location: ' + data.position.lat + ';' + data.position.lng + '</span><br><br>' +
         '<input id="input-radius" type="number" class="form-control" placeholder="Radius (in Meter)">' +
-        '<button class="btn btn-indigo" onclick="searchRadius(' + data.position.lat + ',' + data.position.lng + ')">Search</button>' +
+        '<button class="btn btn-indigo btn-sm" onclick="searchRadius(' + data.position.lat + ',' + data.position.lng + ')">Search</button>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger btn-sm">Delete</button>' +
         '</div>' +
         '</div>';
