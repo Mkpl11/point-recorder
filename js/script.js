@@ -69,6 +69,7 @@ function retrieveMarkers() {
                 data = {
                     'position': position,
                     'nama': result[i].nama,
+                    'img_url': result[i].img_url,
                     'deskripsi': result[i].deskripsi
                 };
                 addMarker(data, false);
@@ -86,7 +87,7 @@ function openAddForm(location) {
 
     var content = '' +
         '<span>Location: '+location.lat+'; '+location.lng+'</span>' +
-        '<form action="./function.php" method="POST">' +
+        '<form action="./function.php" method="POST" enctype="multipart/form-data">' +
         '<input type="hidden" name="action" value="save">' +
         '<input type="hidden" name="latlng" value="'+location.lat+';'+location.lng+'">' +
         '<div class="form-group">' +
@@ -94,6 +95,9 @@ function openAddForm(location) {
         '</div>' +
         '<div class="form-group">' +
         '<input type="text" class="form-control" name="deskripsi" placeholder="Deskripsi">' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<input type="file" name="img" id="img">' +
         '</div>' +
         '<button type="submit" class="btn btn-amber">Add</button>' +
         '</form>';
@@ -149,6 +153,8 @@ function popup_content(data, position) {
         '</div>' +
         '<h5 id="firstHeading" class="firstHeading"><b>' + data.nama + '</b></h5>' +
         '<div id="bodyContent">' +
+        '<img src="'+data.img_url+'" width="500px">' +
+        '<br><br>' +
         '<p>'+data.deskripsi+'</p>' +
         '<span class="small">Location: '+data.position.lat+';'+data.position.lng+'</span><br><br>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger btn-sm">Delete</button>' +
