@@ -151,7 +151,7 @@ function popup_content(data, position) {
         '<div id="bodyContent">' +
         '<p>'+data.deskripsi+'</p>' +
         '<p>Location: '+data.position.lat+';'+data.position.lng+'</p>' +
-        '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger">Delete</button>' +
+        '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger btn-sm">Delete</button>' +
         '</div>' +
         '</div>';
 }
