@@ -1,3 +1,4 @@
 .idea
 conx.php
 uploads/*
+!uploads/test.txt
