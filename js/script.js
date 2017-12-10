@@ -157,7 +157,6 @@ function popup_content(data, position) {
         '<input id="input-radius" type="number" class="form-control" placeholder="Radius (in Meter)">' +
         '<button class="btn btn-indigo" onclick="searchRadius(' + data.position.lat + ',' + data.position.lng + ')">Search</button>' +
         '<button onclick="deleteMarker(\'' + latlng + '\',\'' + position + '\')" class="btn btn-danger">Delete</button>' +
-        '<ul id="ul-radius">' +
         '</ul>' +
         '</div>' +
         '</div>';
@@ -192,7 +191,7 @@ var getDistance = function () {
             new google.maps.LatLng(p1.lat, p1.lng),
             new google.maps.LatLng(p2.lat, p2.lng)
         ],
-        strokeColor: "#FF0000",
+        strokeColor: "#FFB000",
         strokeOpacity: 1.0,
         strokeWeight: 10,
         map: map
